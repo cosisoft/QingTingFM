@@ -4,7 +4,7 @@ import requests,time,math,os
 #专辑ID
 ChannelId = 262151
 #登录信息
-Phone = 13851731192
+Phone = 138517631192
 Password = 'nvT70FtC2Hev'
 #文件下载路径
 FilePath = r'D:\有声小说'
