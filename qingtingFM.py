@@ -4,7 +4,7 @@ import requests,time,math,os
 #专辑ID
 ChannelId = 262151
 #登录信息
-Phone = 138516731192
+Phone = 13851731192
 Password = 'nvT70FtC2Hev'
 #文件下载路径
 FilePath = r'D:\有声小说'
@@ -25,12 +25,13 @@ def ChangeFileName(filename):
     filename = filename.replace('|','')
     filename = filename.replace('?','？')
     filename = filename.replace('（','(')
-    filename = filename.replace(' ','(')
+    filename = filename.replace('）',')')
+    filename = filename.replace(' ','')
     filename = filename.replace(chr(65279),'') # UTF-8+BOM
-    filename = filename.split('(')[0]
+    #filename = filename.split('(')[0]
     return filename
 LoginUrl = 'https://u2.qingting.fm/u2/api/v4/user/login'
-data = {'account_type': '5','device_id': 'web','user_id': Phone,'password': Password}
+data = {'account_type': '5','area_code': '+86','device_id': 'qt_web_a_account','user_id': Phone,'password': Password,'platform': 'web',}
 Conn = requests.session()
 Response = Conn.post(LoginUrl,data)
 ResponseJson = Response.json()
@@ -39,6 +40,7 @@ if errorno ==0:
     print('登录成功！')
 else:
     print('登录失败！')
+
 QingtingID = ResponseJson['data']['qingting_id']
 AudioDetail = 'https://webapi.qingting.fm/api/mobile/channels/%d'%ChannelId
 AudioDetailJson = Conn.get(AudioDetail)
@@ -52,7 +54,7 @@ print('章节数：',ProgramCount)
 print('页熟：',Page)
 print('---')
 Version = AudioDetailJson['channel']['v']
-AlreadyDown = [FileName.replace('.mp3','',1) for FileName in os.listdir(FilePath)]
+AlreadyDown = [FileName.replace('.m4a','',1) for FileName in os.listdir(FilePath)]
 for i in range(Page):
     page = i + 1
     print('正在抓取第%d页'%page)
@@ -63,6 +65,7 @@ for i in range(Page):
     for program in programs:
         programId = program['programId']
         title = program['title']
+        print('正在下载 %s ……'%title)
         audiodetail = 'https://webapi.qingting.fm/api/mobile/channels/%d/programs/%d?user_id=%s'%(ChannelId,programId,QingtingID)
         print(audiodetail)
         programResponse = Conn.get(audiodetail)
@@ -74,5 +77,5 @@ for i in range(Page):
             print('目录已有该文件，跳过下载。')
             continue
         audioUrl = programInfo['audioUrl']
-        IdmDownLoad(audioUrl, AudioName+'.mp3')
+        IdmDownLoad(audioUrl, AudioName+'.m4a')
         time.sleep(10)
